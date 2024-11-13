@@ -1,52 +1,51 @@
 
-public abstract class Conta implements IConta {
-	
-	private static final int AGENCIA_PADRAO = 1;
-	private static int SEQUENCIAL = 1;
+public abstract class Conta {
+    protected String numero;
+    protected double saldo;
 
-	protected int agencia;
-	protected int numero;
-	protected double saldo;
-	protected Cliente cliente;
+    public Conta(String numero, double saldo) {
+        if (numero == null || numero.isEmpty()) {
+            throw new IllegalArgumentException("O número da conta não pode ser nulo ou vazio.");
+        }
+        this.numero = numero;
+        this.saldo = saldo > 0 ? saldo : 0; // Saldo inicial não pode ser negativo
+    }
 
-	public Conta(Cliente cliente) {
-		this.agencia = Conta.AGENCIA_PADRAO;
-		this.numero = SEQUENCIAL++;
-		this.cliente = cliente;
-	}
+    public String getNumero() {
+        return numero;
+    }
 
-	@Override
-	public void sacar(double valor) {
-		saldo -= valor;
-	}
+    public double getSaldo() {
+        return saldo;
+    }
 
-	@Override
-	public void depositar(double valor) {
-		saldo += valor;
-	}
+    public void depositar(double valor) {
+        if (valor > 0) {
+            saldo += valor;
+            System.out.println("Depósito de R$" + valor + " realizado com sucesso! Saldo atual: R$" + saldo);
+        } else {
+            System.out.println("Valor de depósito inválido!");
+        }
+    }
 
-	@Override
-	public void transferir(double valor, IConta contaDestino) {
-		this.sacar(valor);
-		contaDestino.depositar(valor);
-	}
+    public void sacar(double valor) {
+        if (valor > 0 && valor <= saldo) {
+            saldo -= valor;
+            System.out.println("Saque de R$" + valor + " realizado com sucesso! Saldo atual: R$" + saldo);
+        } else {
+            System.out.println("Saldo insuficiente ou valor de saque inválido!");
+        }
+    }
 
-	public int getAgencia() {
-		return agencia;
-	}
+    public void consultarSaldo() {
+        System.out.println("Saldo da conta " + numero + ": R$" + saldo);
+    }
 
-	public int getNumero() {
-		return numero;
-	}
-
-	public double getSaldo() {
-		return saldo;
-	}
-
-	protected void imprimirInfosComuns() {
-		System.out.println(String.format("Titular: %s", this.cliente.getNome()));
-		System.out.println(String.format("Agencia: %d", this.agencia));
-		System.out.println(String.format("Numero: %d", this.numero));
-		System.out.println(String.format("Saldo: %.2f", this.saldo));
-	}
+    @Override
+    public String toString() {
+        return "Conta{" +
+                "numero='" + numero + '\'' +
+                ", saldo=" + saldo +
+                '}';
+    }
 }
